@@ -11,18 +11,17 @@ from preprocessing import preprocessing_train
 from model import NeuralNetRegressorWithDropout
 from sklearn.model_selection import train_test_split
 
+import logging
 
+logger = logging.getLogger(__name__)
+NUM_EPOCHS_TRIALS = 10
+N_TRIALS = 50
+RANDOM_STATE = 230
+TEST_SIZE = 0.20
 class HyperParameterTesting:
-    def __init__(self):
-        self.X_train = None
-        self.X_test = None
-        self.y_train = None
-        self.y_test = None
+    def __init__(self, x_train, y_train):
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(x_train, y_train, test_size=TEST_SIZE, random_state=RANDOM_STATE)
         
-        
-    def set_data(self, train):
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(train.iloc[:, :-1], train.iloc[:, -1], test_size=0.25, random_state=213)
-
     def run_trials(self):
         
         def objective(trial):
@@ -35,12 +34,14 @@ class HyperParameterTesting:
             }
 
             model = NeuralNetRegressorWithDropout(**params)
-            model.fit(self.X_train, self.y_train, learning_rate)
-            loss = model.predict(self.X_test, self.y_test)
+            model.fit(self.X_train, self.y_train, learning_rate, NUM_EPOCHS_TRIALS)
+            loss = model.evaluate(self.X_test, self.y_test)
             return loss
 
-
+        logger.info("--- START HyperParameter Testing ---")   
         study = optuna.create_study(direction='minimize')
-        study.optimize(objective, n_trials=50)
-        return study.best_params
+        study.optimize(objective, n_trials=N_TRIALS)
+        logger.info("--- END HyperParameter Testing ---")
+        
+        return dict(study.best_params)
     
