@@ -18,8 +18,8 @@ class NeuralNetRegressorWithDropout(nn.Module):
         # Define layers with customizable hidden size and dropout
         self.fc1 = nn.Linear(input_size, hidden_size_1)
         self.fc2 = nn.Linear(hidden_size_1, hidden_size_1)
-        self.fc3 = nn.Linear(hidden_size_1, hidden_size_2)
-        self.fc4 = nn.Linear(hidden_size_2, hidden_size_2)
+        self.fc3 = nn.Linear(hidden_size_1, hidden_size_1)
+        self.fc4 = nn.Linear(hidden_size_1, hidden_size_2)
         self.fc5 = nn.Linear(hidden_size_2, hidden_size_2 // 2)
         self.fc6 = nn.Linear(hidden_size_2 // 2, hidden_size_2 // 4)
         

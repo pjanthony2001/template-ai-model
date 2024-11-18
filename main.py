@@ -1,6 +1,7 @@
 from hyperparam import HyperParameterTesting
 from preprocessing import get_data
 from model import NeuralNetRegressorWithDropout
+import torch
 import logging
 
 NUM_EPOCHS_BEST = 30
@@ -19,6 +20,11 @@ learning_rate = best_params.pop("learning_rate")
 model = NeuralNetRegressorWithDropout(input_size=x_train.shape[1], **best_params)
 model.fit(x_train, y_train)
 logger.info("--- END Training Best Model ---")
+
+
+logger.info("--- START Saving Best Model ---")
+torch.save(model, "bestmodel.mdl")
+logger.info("--- END Saving Best Model ---")
 
 loss = model.evaluate(x_test)
 logging.info(f"Best loss achieved: {loss}")
